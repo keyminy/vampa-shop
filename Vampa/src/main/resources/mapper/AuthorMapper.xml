@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vampa.mapper.AuthorMapper">
+	<!-- 작가 등록 -->
+	<insert id="authorEnroll">
+		insert into vam_author(authorid,authorName, nationId, authorIntro)
+		values(AUTHOR_SEQ.nextval,#{authorName}, #{nationId}, #{authorIntro} )
+	</insert>
+
+	<!-- 작가 조회 -->
+	<select id="authorGetList"
+		resultType="com.vampa.model.AuthorVO">
+ <![CDATA[
+		SELECT * FROM
+		(
+			SELECT /*+ INDEX_DESC(vam_author SYS_C0010168) */
+			ROWNUM rn,authorid,authorname,nationid,regdate,updatedate
+			FROM vam_author
+			WHERE 
+	]]>
+	<if test="keyword!=null">
+			authorname like '%'||#{keyword}||'%' AND
+	</if>
+	 <![CDATA[
+			ROWNUM <= #{pageNum} * #{amount}
+		)
+		WHERE rn > (#{pageNum}-1) * #{amount}
+	  ]]>
+	</select>
+	
+			<!-- 작가 수 구하기 -->
+  	<select id="authorGetTotal" resultType="int">
+  		SELECT COUNT(*) FROM vam_author
+  		<if test="keyword!=null">
+  			WHERE authorname LIKE '%' || #{keyword} || '%'
+  		</if>
+  	</select>
+  	
+  	<!-- 작가 디테일 페이지 -->
+  	<select id="authorGetDetail" resultType="com.vampa.model.AuthorVO">
+  		select * from vam_author where authorid = #{authorId}
+  	</select>
+  	
+  	<update id="authorModify">
+  		UPDATE vam_author 
+  		SET
+	  		authorName = #{authorName},
+	  		nationId = #{nationId},
+	  		authorIntro = #{authorIntro},
+	  		updatedate=SYSDATE
+  		WHERE authorId = #{authorId}
+  	</update>
+</mapper>
+ 
