@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
+import com.vampa.model.Criteria;
 
 @Mapper
 public interface AdminMapper {
@@ -15,4 +16,10 @@ public interface AdminMapper {
 	
 	/* 카테고리 리스트 */
 	public List<CateVO> cateList();
+	
+	/* 상품 리스트 */
+	public List<BookVO> goodsGetList(Criteria cri);
+	
+	/* 상품 총 갯수 */
+	public int goodsGetTotal(Criteria cri);
 }

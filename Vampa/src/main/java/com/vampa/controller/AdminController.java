@@ -42,10 +42,23 @@ public class AdminController {
         
     }
     
-    /* 상품 등록 페이지 접속 */
+    
+    /* 상품 관리(상품목록) 페이지 접속 */
     @RequestMapping(value = "goodsManage", method = RequestMethod.GET)
-    public void goodsManageGET() throws Exception{
-        log.info("상품 등록 페이지 접속");
+    public void goodsManageGET(Criteria cri, Model model) throws Exception{
+        log.info("상품 관리(상품목록) 페이지 접속, cri : " + cri);
+        /* 상품 리스트 데이터 */
+        List<BookVO> list = adminService.goodsGetList(cri);
+        if(!list.isEmpty()) {
+        	model.addAttribute("list",list);
+        }else {
+        	model.addAttribute("listCheck","empty");
+        	return;
+        }
+        /* 페이지 인터페이스 데이터 */
+        int total = adminService.goodsGetTotal(cri);
+        PageDTO pageMaker = new PageDTO(cri, total);
+        model.addAttribute("pageMaker",pageMaker);
     }
     
     /* 상품 등록 페이지 접속 */

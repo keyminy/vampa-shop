@@ -13,5 +13,35 @@
   		select * from vam_bcate order by catecode
   	</select>
   	
+  	<!-- 상품 리스트 -->
+	<select id="goodsGetList"
+		resultType="com.vampa.model.BookVO">
+ <![CDATA[
+		SELECT * FROM
+		(
+			SELECT /*+ INDEX_DESC(vam_author SYS_C0010457) */
+			ROWNUM rn,bookId,bookName,
+			(SELECT authorName FROM vam_author WHERE vam_book.authorId = vam_author.authorId) authorName,
+			(SELECT cateName FROM vam_bcate WHERE vam_book.cateCode = vam_bcate.cateCode) cateName,
+			bookStock,regDate
+			FROM vam_book
+			WHERE 
+	]]>
+	<if test="keyword!=null">
+			bookName like '%'||#{keyword}||'%' AND
+	</if>
+	 <![CDATA[
+			ROWNUM <= #{pageNum} * #{amount}
+		)
+		WHERE rn > (#{pageNum}-1) * #{amount}
+	  ]]>
+	</select>
 
+  	<!-- 상품 총 개수 -->
+  	<select id="goodsGetTotal" resultType="int">
+  		select count(*) from vam_book
+  		<if test="keyword != null">
+  			where bookName like '%' || #{keyword} || '%'
+  		</if>
+  	</select> 
   </mapper>
