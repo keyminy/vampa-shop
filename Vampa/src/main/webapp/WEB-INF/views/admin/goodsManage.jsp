@@ -37,7 +37,11 @@
 						<c:forEach items="${list}" var="list">
 							<tr>
 								<td><c:out value="${list.bookId}"></c:out></td>
-								<td><c:out value="${list.bookName}"></c:out></td>
+								<td>
+									<a class="move" href='<c:out value="${list.bookId}"/>'>
+										<c:out value="${list.bookName}"></c:out>
+									</a>
+								</td>
 								<td><c:out value="${list.authorName}"></c:out></td>
 								<td><c:out value="${list.cateName}"></c:out></td>
 								<td><c:out value="${list.bookStock}"></c:out></td>
@@ -105,7 +109,6 @@
 				}
 				alert("상품'" + eResult + "'을 등록하였습니다.");
 			}
-			
 			/* 검색 & 페이징 이동 스크립트 */
 			let searchForm = $('#searchForm');
 			let moveForm = $('#moveForm');
@@ -126,6 +129,14 @@
 			$(".pageMaker_btn a").on("click",function(e){
 				e.preventDefault();
 				moveForm.find("input[name='pageNum']").val($(this).attr("href"));
+				moveForm.submit();
+			});
+
+			/* 상품 조회 페이지 동작하게 하기 */
+			$(".move").on("click",function(e){
+				e.preventDefault();
+				moveForm.append("<input type='hidden' name='bookId' value='"+$(this).attr("href")+"'>");
+				moveForm.attr("action","/admin/goodsDetail");
 				moveForm.submit();
 			});
 		});

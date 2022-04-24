@@ -156,4 +156,14 @@ public class AdminController {
 		rttr.addFlashAttribute("modify_result", result);
 		return "redirect:/admin/authorManage";
 	}
+	
+	/* 상품 조회 페이지 */
+	@GetMapping("/goodsDetail")
+	public void goodsGetInfoGET(int bookId, Criteria cri, Model model) {
+		log.info("goodsGetInfo()........." + bookId);
+		/* 목록 페이지 조건 정보 */
+		model.addAttribute("cri", cri);
+		/* 조회 페이지 정보 */
+		model.addAttribute("goodsInfo", adminService.goodsGetDetail(bookId));
+	}
 }

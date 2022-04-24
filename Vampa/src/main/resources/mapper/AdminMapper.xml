@@ -44,4 +44,17 @@
   			where bookName like '%' || #{keyword} || '%'
   		</if>
   	</select> 
+  	
+  	<!-- 상품 조회 페이지 -->
+  	<!-- 작가이름 나오게하기 위해, 서브쿼리 이용(작가ID가 아니야) -->
+  	<select id="goodsGetDetail" resultType="com.vampa.model.BookVO">
+  		SELECT bookId,bookName,
+  		(
+	  		SELECT authorName FROM vam_author 
+	  		WHERE vam_author.authorId = vam_book.authorId
+  		) authorName,
+  		authorId, publeYear, publisher, cateCode, bookPrice, bookStock, bookDiscount, bookIntro, bookContents, regDate, updateDate
+  		FROM vam_book
+  		WHERE bookId=#{bookId}
+  	</select>
   </mapper>
