@@ -86,17 +86,17 @@
 				</div>
 				<div class="form_section_content">
 					<div class="cate_wrap">
-						<span>대분류</span> <select class="cate1" disabled>
+						<span>대분류</span> <select class="cate1" disabled >
 							<option value="none">선택</option>
 						</select>
 					</div>
 					<div class="cate_wrap">
-						<span>중분류</span> <select class="cate2" disabled>
+						<span>중분류</span> <select class="cate2"  disabled>
 							<option value="none">선택</option>
 						</select>
 					</div>
 					<div class="cate_wrap">
-						<span>소분류</span> <select class="cate3" name="cateCode" disabled>
+						<span>소분류</span> <select class="cate3" name="cateCode" disabled >
 							<option value="none">선택</option>
 						</select>
 					</div>
@@ -192,7 +192,100 @@
 				.catch(error=>{
 					console.log(error);
 				});
+			/* 카테고리 */
+			let cateList = JSON.parse('${cateList}');
+			let cate1Array = new Array();
+			let cate2Array = new Array();
+			let cate3Array = new Array();
+			let cate1Obj = new Object();
+			let cate2Obj = new Object();
+			let cate3Obj = new Object();
+			
+			let cateSelect1 = $(".cate1");
+			let cateSelect2 = $(".cate2");
+			let cateSelect3 = $(".cate3");
+			
+			/* 카테고리 배열 초기화 메서드 */
+			function makeCateArray(obj,array,cateList,tier){
+				for(let i=0;i<cateList.length;i++){
+					if(cateList[i].tier===tier){
+						obj = new Object();
+						obj.cateName = cateList[i].cateName;
+						obj.cateCode = cateList[i].cateCode;
+						obj.cateParent = cateList[i].cateParent;
+						array.push(obj);
+					}
+				}
+			}
+			
+			/* 배열 초기화 */
+			makeCateArray(cate1Obj,cate1Array,cateList,1);
+			makeCateArray(cate2Obj,cate2Array,cateList,2);
+			makeCateArray(cate3Obj,cate3Array,cateList,3);
+			
+			/* 중,소분류 카테고리 */
+			let targetCate2 = '';
+			//소분류 변수에는 DB에 저장된 사용자가 선택한 카테고리 코드로 초기화 
+			let targetCate3 = '${goodsInfo.cateCode}'; //102001(코드만 저장됨)
+			//alert(targetCate3);
+			
+			//targetCate3변수를 cateParent,cateName값도 포함된 객체를 저장되도록
+			for(let i=0;i<cate3Array.length;i++){
+				if(targetCate3===cate3Array[i].cateCode){
+					targetCate3 = cate3Array[i];
+				}
+			}//end for
+			
+			console.log("cate3Array : " , cate3Array)
+			console.log('targetCate3 : ' + targetCate3);
+			console.log('targetCate3.cateName : ' + targetCate3.cateName);
+			console.log('targetCate3.cateCode : ' + targetCate3.cateCode);
+			console.log('targetCate3.cateParent : ' + targetCate3.cateParent);
+			
+			/*소분류 select항목에 추가하는 코드 작성하기 */
+			for(let i=0; i< cate3Array.length;i++){
+				if(targetCate3.cateParent === cate3Array[i].cateParent){
+					cateSelect3.append("<option value='"+cate3Array[i].cateCode+"'>"+cate3Array[i].cateName+"</option>");
+				}
+			}
+			//DB에 저장된 값에 해당하는 카테고리 <option>태그에 selected 속성이 추가되도록 코드 작성
+			$(".cate3 option").each(function(i,obj){
+				//여기서 obj는 item값임 == <option value="102002">해외시</option>
+				if(targetCate3.cateCode === obj.value){
+					$(obj).attr("selected","selected");
+				}		
+			});
+		/* 중분류 출력시키기 targetCate2변수에 선택되어야 할 항목 객체로 초기화 */
+		for(let i=0;i<cate2Array.length;i++){
+			if(targetCate3.cateParent === cate2Array[i].cateCode){
+				targetCate2 = cate2Array[i];
+			}
+		}
+		console.log("targetCate2",targetCate2);
+		//중분류의 select태그에 option태그 추가
+		for(let i=0;i<cate2Array.length;i++){
+			if(targetCate2.cateParent === cate2Array[i].cateParent){
+				cateSelect2.append("<option value='"+cate2Array[i].cateCode+"'>"+cate2Array[i].cateName+"</option>")
+			}
+		}
+		$(".cate2 option").each(function(i,obj){
+			if(targetCate2.cateCode===obj.value){
+				$(obj).attr("selected","selected");
+			}
 		});
+		/*대분류 출력시키기*/
+		//대분류의 option태그들을 추가시키기
+		for(let i=0;i<cate1Array.length;i++){
+			cateSelect1.append("<option value='"+cate1Array[i].cateCode+"'>"+cate1Array[i].cateName+"</option>")
+		}
+		//targetCate2.cateParent값을 활용하여 대분류 중 선택되어야 할 option태그에 selected속성 추가
+		$(".cate1 option").each(function(i,obj){
+			if(targetCate2.cateParent === obj.value){
+				$(obj).attr("selected","selected");
+			}
+		});
+		
+		}); //end $(document).ready		
 	</script>
 </body>
 </html>

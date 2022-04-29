@@ -11,13 +11,13 @@ select * from vam_book;
 
 select * from vam_bcate order by catecode;
 
--- ÀÛ°¡¸ñ·Ï Á¶È¸ Äõ¸®
+-- ì‘ê°€ëª©ë¡ ì¡°íšŒ ì¿¼ë¦¬
 
 
---µ¥ÀÌÅÍ ¼ö ´Ã¸®±â
+--ë°ì´í„° ìˆ˜ ëŠ˜ë¦¬ê¸°
  insert into vam_author(authorid,authorName, nationId, authorIntro)
- (SELECT AUTHOR_SEQ.nextval,authorName,nationId,'¤¾¤¾¤·¤¾¤·' FROM vam_author);
--- ÀÎµ¦½º Å×½ºÆ®
+ (SELECT AUTHOR_SEQ.nextval,authorName,nationId,'ã…ã…ã…‡ã…ã…‡' FROM vam_author);
+-- ì¸ë±ìŠ¤ í…ŒìŠ¤íŠ¸
   SELECT /*+ INDEX_DESC(vam_author SYS_C0010168) */
     *
     FROM vam_author
@@ -32,21 +32,21 @@ select * from vam_author;
     ORDER BY authorid DESC;
 
 
--- ÀÎµ¦½º ¸í Ã£±â
+-- ì¸ë±ìŠ¤ ëª… ì°¾ê¸°
 SELECT * FROM USER_INDEXES;
--- ¿Ü·¡Å° Ãß°¡
+-- ì™¸ë˜í‚¤ ì¶”ê°€
 alter table vam_book add foreign key (authorId) references vam_author(authorId);
 alter table vam_book add foreign key (cateCode) references vam_bcate(cateCode);
 
--- 19°­,»óÇ° ¸ñ·Ï ±¸ÇöÇÏ±â 
--- Àç±Íº¹»ç
+-- 19ê°•,ìƒí’ˆ ëª©ë¡ êµ¬í˜„í•˜ê¸° 
+-- ì¬ê·€ë³µì‚¬
 insert into vam_book(bookId,bookName, authorId, publeYear, publisher, cateCode, bookPrice, bookStock, bookDiscount,bookIntro, bookContents)
 (select vam_book_seq.nextval,bookName, authorId, publeYear, publisher, cateCode, bookPrice, bookStock, bookDiscount,bookIntro, bookContents from vam_book);
 
 commit;
 
 select * from USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
--- vam_book ÀÎµ¦½º Å×½ºÆ®
+-- vam_book ì¸ë±ìŠ¤ í…ŒìŠ¤íŠ¸
   SELECT /*+ INDEX_DESC(vam_author SYS_C0010457) */
     *
     FROM vam_book
