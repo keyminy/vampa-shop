@@ -159,9 +159,10 @@ public class AdminController {
 	}
 	
 	/* 상품 조회 페이지 */
-	@GetMapping("/goodsDetail")
+	@GetMapping({"/goodsDetail","/goodsModify"})
 	public void goodsGetInfoGET(int bookId, Criteria cri, Model model) throws JsonProcessingException {
 		log.info("goodsGetInfo()........." + bookId);
+		log.info("크라이테리아? : ",cri);
 		ObjectMapper mapper = new ObjectMapper();
 		/* 카테고리 리스트 데이터 */
 		model.addAttribute("cateList",mapper.writeValueAsString(adminService.cateList()));
@@ -169,5 +170,42 @@ public class AdminController {
 		model.addAttribute("cri", cri);
 		/* 조회 페이지 정보 */
 		model.addAttribute("goodsInfo", adminService.goodsGetDetail(bookId));
+	}
+	
+	/* 상품 정보 수정 */
+	@PostMapping("/goodsModify")
+	public String goodsModifyPOST(BookVO vo, RedirectAttributes rttr) {
+		log.info("goodsModifyPOST.........." + vo);
+		int result = adminService.goodsModify(vo);
+		rttr.addFlashAttribute("modify_result", result);
+		return "redirect:/admin/goodsManage";		
+	}
+	
+	/* 상품 정보 삭제 */
+	@PostMapping("/goodsDelete")
+	public String goodsDeletePOST(int bookId, RedirectAttributes rttr) {
+		log.info("goodsDeletePOST..........");
+		int result = adminService.goodsDelete(bookId);
+		rttr.addFlashAttribute("delete_result", result);
+		return "redirect:/admin/goodsManage";
+	}
+	
+	/* 작가 정보 삭제 */
+	/*참조되지 않는 행을 지울 땐, 삭제를 수행하고 '작가 목록' 페이지로 1을 전송
+	 * 참조되고 있는 행을 지울려고해서 예외가 발생하면 '작가 목록' 페이지로 2를 전송*/
+	@PostMapping("/authorDelete")
+	public String authorDeletePost(int authorId,RedirectAttributes rttr) {
+		log.info("authorDeletePOST..........");
+		int result = 0;
+		try {
+			result = authorService.authorDelete(authorId);
+		}catch(Exception e) {
+			e.printStackTrace();
+			result = 2;
+			rttr.addFlashAttribute("delete_result", result);
+			return "redirect:/admin/authorManage";
+		}
+		rttr.addFlashAttribute("delete_result", result);
+		return "redirect:/admin/authorManage";
 	}
 }

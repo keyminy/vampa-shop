@@ -25,4 +25,10 @@ public interface AdminMapper {
 	
 	/* 상품 조회 페이지 */
 	public BookVO goodsGetDetail(int bookId);
+	
+	/* 상품 수정 */
+	public int goodsModify(BookVO vo);
+	
+	/* 상품 정보 삭제 */
+	public int goodsDelete(int bookId);
 }
