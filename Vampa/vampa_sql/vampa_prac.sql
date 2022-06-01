@@ -52,3 +52,4 @@ select * from USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
     FROM vam_book
     WHERE bookid > 0
     ORDER BY bookid DESC;
+    

@@ -35,8 +35,8 @@
 						<label>책 제목</label>
 					</div>
 					<div class="form_section_content">
-						<input name="bookName">
-						<span class="ck_warn bookName_warn">책 이름을 입력해주세요.</span>
+						<input name="bookName"> <span
+							class="ck_warn bookName_warn">책 이름을 입력해주세요.</span>
 					</div>
 				</div>
 				<div class="form_section">
@@ -44,8 +44,8 @@
 						<label>작가</label>
 					</div>
 					<div class="form_section_content">
-						<input type="text" id="authorName_input" readonly="readonly"/>
-						<input id="authorId_input" name="authorId" type="hidden"/>
+						<input type="text" id="authorName_input" readonly="readonly" /> <input
+							id="authorId_input" name="authorId" type="hidden" />
 						<button class="authorId_btn">작가 선택</button>
 						<span class="ck_warn authorId_warn">작가를 선택해주세요</span>
 					</div>
@@ -64,8 +64,8 @@
 						<label>출판사</label>
 					</div>
 					<div class="form_section_content">
-						<input name="publisher">
-						<span class="ck_warn publisher_warn">출판사를 입력해주세요.</span>
+						<input name="publisher"> <span
+							class="ck_warn publisher_warn">출판사를 입력해주세요.</span>
 					</div>
 				</div>
 				<div class="form_section">
@@ -74,20 +74,17 @@
 					</div>
 					<div class="form_section_content">
 						<div class="cate_wrap">
-							<span>대분류</span> 
-							<select class="cate1">
+							<span>대분류</span> <select class="cate1">
 								<option selected value="none">선택</option>
 							</select>
 						</div>
 						<div class="cate_wrap">
-							<span>중분류</span> 
-							<select class="cate2">
+							<span>중분류</span> <select class="cate2">
 								<option selected value="none">선택</option>
 							</select>
 						</div>
 						<div class="cate_wrap">
-							<span>소분류</span> 
-							<select name="cateCode" class="cate3">
+							<span>소분류</span> <select name="cateCode" class="cate3">
 								<option selected value="none">선택</option>
 							</select>
 						</div>
@@ -99,8 +96,8 @@
 						<label>상품 가격</label>
 					</div>
 					<div class="form_section_content">
-						<input name="bookPrice" value="0">
-						<span class="ck_warn bookPrice_warn">상품 가격을 입력해주세요.</span>
+						<input name="bookPrice" value="0"> <span
+							class="ck_warn bookPrice_warn">상품 가격을 입력해주세요.</span>
 					</div>
 				</div>
 				<div class="form_section">
@@ -108,8 +105,8 @@
 						<label>상품 재고</label>
 					</div>
 					<div class="form_section_content">
-						<input name="bookStock" value="0">
-						<span class="ck_warn bookStock_warn">상품 재고를 입력해주세요.</span>
+						<input name="bookStock" value="0"> <span
+							class="ck_warn bookStock_warn">상품 재고를 입력해주세요.</span>
 					</div>
 				</div>
 				<div class="form_section">
@@ -119,9 +116,10 @@
 					<div class="form_section_content">
 						<input id="discount_interface" maxlength="2" value="0">
 						<!-- bookDiscount hidden태그는 사용자가 정수값입력 시, 해당 값을 소수로 변경하여 서버로 전송 -->
-						<input name="bookDiscount" type="hidden" value="0">
-						<span class="step_val">할인 적용된 최종 가격 : <span class="span_discount"></span></span>
-						<span class="ck_warn bookDiscount_warn">1~99 숫자를 입력해주세요.</span>
+						<input name="bookDiscount" type="hidden" value="0"> <span
+							class="step_val">할인 적용된 최종 가격 : <span
+							class="span_discount"></span></span> <span
+							class="ck_warn bookDiscount_warn">1~99 숫자를 입력해주세요.</span>
 					</div>
 				</div>
 				<div class="form_section">
@@ -140,6 +138,15 @@
 					<div class="form_section_content bct">
 						<textarea name="bookContents" id="bookContents_textarea"></textarea>
 						<span class="ck_warn bookContents_warn">책 목차를 입력해주세요.</span>
+					</div>
+				</div>
+				<div class="form_section">
+					<div class="form_section_title">
+						<label>상품 이미지</label>
+					</div>
+					<div class="form_section_content">
+						<input type="file" name="uploadFile" id="fileItem"
+							style="height: 30px;" />
 					</div>
 				</div>
 			</form>
@@ -450,6 +457,54 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 			$(".span_discount").html(discountPrice);
 		}
 	});
+	
+	/* 이미지 업로드 */
+	$("input[type='file']").on("change",function(e){
+		
+		let formData = new FormData(); //FormData객체 생성
+		//alert("동작");
+		/* FileList객체에 접근해보기 */
+		let fileInput = $("input[name='uploadFile']");
+		let fileList = fileInput[0].files;
+/* 		console.log("fileList : ",fileList); */
+		let fileObj = fileList[0];
+		/* console.log("fileObj : ",fileObj);
+		console.log("fileName : " + fileObj.name);
+		console.log("fileSize : " + fileObj.size);
+		console.log("fileType(MimeType) : " + fileObj.type); */
+		
+		if(!fileCheck(fileObj.name,fileObj.size)){
+			return false;
+		}
+		
+		formData.append("uploadFile",fileObj);
+		
+		/* AJAX로 서버로 전송하는 코드 */
+		$.ajax({
+			url:'/admin/uploadAjaxAction',
+			processData:false,
+			contentType:false,
+			data:formData,
+			type:"POST",
+			dataType:'json'
+		});
+	});
+		/* file 제약조건 걸기 */
+		let regex = new RegExp("(.*?)\.(jpg|png)$");
+		let maxSize = 1048576;
+		
+		function fileCheck(fileName,fileSize){
+			if(fileSize >= maxSize){
+				alert("파일 사이즈 초과");
+				return false;
+			}
+			console.log("fileName : ",fileName);
+			if(!regex.test(fileName)){
+				alert("해당 종류의 파일은 업로드할 수 없습니다.");
+				return false;
+			}
+			return true;
+		}
 });
 		
 	</script>
