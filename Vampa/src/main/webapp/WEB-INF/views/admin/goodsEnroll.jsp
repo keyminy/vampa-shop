@@ -473,10 +473,10 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 		console.log("fileSize : " + fileObj.size);
 		console.log("fileType(MimeType) : " + fileObj.type); */
 		
-		if(!fileCheck(fileObj.name,fileObj.size)){
+/* 		if(!fileCheck(fileObj.name,fileObj.size)){
 			return false;
 		}
-		
+		 */
 		formData.append("uploadFile",fileObj);
 		
 		/* AJAX로 서버로 전송하는 코드 */
@@ -486,11 +486,17 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 			contentType:false,
 			data:formData,
 			type:"POST",
-			dataType:'json'
+			dataType:'json',
+			success:function(result){
+				console.log(result);
+			},
+			error:function(result){
+				alert("이미지 파일이 아닙니다.");
+			}
 		});
 	});
 		/* file 제약조건 걸기 */
-		let regex = new RegExp("(.*?)\.(jpg|png)$");
+		let regex = new RegExp("(.*?)\.(jpg|png)$","i");
 		let maxSize = 1048576;
 		
 		function fileCheck(fileName,fileSize){

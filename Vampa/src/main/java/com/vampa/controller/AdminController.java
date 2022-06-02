@@ -1,13 +1,20 @@
 package com.vampa.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vampa.model.AttachImageVO;
 import com.vampa.model.AuthorVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
@@ -28,6 +36,7 @@ import com.vampa.service.AdminService;
 import com.vampa.service.AuthorService;
 
 import lombok.extern.log4j.Log4j2;
+import net.coobird.thumbnailator.Thumbnails;
 
 @Controller
 @RequestMapping("/admin")
@@ -89,8 +98,27 @@ public class AdminController {
 
 	/* goodsEnroll에서 첨부파일 업로드 */
 	@PostMapping("/uploadAjaxAction")
-	public void uploadAjaxActionPOST(MultipartFile[] uploadFile) {
+	public ResponseEntity<List<AttachImageVO>> uploadAjaxActionPOST(MultipartFile[] uploadFile) {
 		log.info("uploadAjaxActionPOST......");
+		/* 이미지 파일 체크 */
+		for(MultipartFile multipartFile : uploadFile) {
+			/* 전달받은 uploadFile을 File객체로 만들어준다 */
+			File checkfile = new File(multipartFile.getOriginalFilename());
+			String type = null; //MIME TYPE저장
+			try {
+				type = Files.probeContentType(checkfile.toPath());
+				log.info("MIME TYPE : " + type);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(!type.startsWith("image")) {
+				//MIME_TYPE이 이미지가 아닌 경우 실행
+				List<AttachImageVO> list = null;
+				return new ResponseEntity<>(list,HttpStatus.BAD_REQUEST);
+			}
+		}//end 이미지 파일체크 for
+		
 		String uploadFolder = "D:/dev/vamupload";
 		
 		/* 날짜 폴더 경로 생성 */
@@ -108,20 +136,59 @@ public class AdminController {
 			uploadPath.mkdirs();//여러개 폴더 생성
 		}
 		
+		/* 이미지 정보를 담는 객체 */
+		List<AttachImageVO> list = new ArrayList();
+		
 		for(MultipartFile multipartFile : uploadFile) {
+			/* 이미지 정보 객체 */
+			AttachImageVO vo = new AttachImageVO();
 			/* 파일 이름 */
-			String uuid = UUID.randomUUID().toString();
 			String uploadFileName = multipartFile.getOriginalFilename();
+			vo.setFileName(uploadFileName);
+			vo.setUploadPath(datePath);
+			
+			/* uuid 적용 파일 이름 */
+			String uuid = UUID.randomUUID().toString();
+			vo.setUuid(uuid);
 			uploadFileName = uuid + "_" + uploadFileName;
+			
 			/* 파일 경로 + 파일 이름을 합친 File객체 만들기 */
 			File saveFile = new File(uploadPath,uploadFileName);
+			/* 파일 저장 : transferTo() */
 			try {
 				multipartFile.transferTo(saveFile);
+				/* (M1)썸네일 생성(ImageIO) */
+//				File thumbnailFile = new File(uploadPath,"s_"+uploadFileName);
+//				BufferedImage bo_image = ImageIO.read(saveFile);
+//				/* 축소 비율 설정 */
+//				double ratio = 3;
+//				/* 넓이,높이 */
+//				int width = (int)(bo_image.getWidth()/ratio);
+//				int height = (int)(bo_image.getHeight()/ratio);
+//				BufferedImage bt_image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+//				Graphics2D graphic = bt_image.createGraphics();
+//				graphic.drawImage(bo_image, 0, 0, width, height,null);
+//				ImageIO.write(bt_image,"jpg", thumbnailFile);
+				
+				/* (M2)썸네일 생성(thumbnailaotor) */
+				File thumbnailFile = new File(uploadPath,"s_"+uploadFileName);
+				BufferedImage bo_image = ImageIO.read(saveFile);
+				//비율
+				double ratio = 3;
+				//넓이,높이
+				int width = (int)(bo_image.getWidth()/ratio);
+				int height = (int)(bo_image.getHeight()/ratio);
+				Thumbnails.of(saveFile)
+						  .size(width,height)
+						  .toFile(thumbnailFile);
 			} catch (IllegalStateException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+			list.add(vo);
+		}//end for
+		ResponseEntity<List<AttachImageVO>> result = new ResponseEntity<List<AttachImageVO>>(list,HttpStatus.OK); 
+		return result;
 	}
 
 	/* 작가 검색 팝업창 */
