@@ -18,10 +18,37 @@
 <link rel="stylesheet" href="/resources/demos/style.css">
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-</head>
+<style>
+	#result_card img{
+		max-width:100%;
+		height:auto;
+		display:block;
+		padding:5px;
+		margin-top:10px;
+		margin:auto;
+	}
+	#result_card{
+		position:relative;
+	}
+	.imgDeleteBtn{
+		position:absolute;
+		top:0;
+		right:5%;
+	 	background-color: #ef7d7d;
+    color: wheat;
+    font-weight: 900;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 26px;
+    text-align: center;
+    border: none;
+    display: block;
+    cursor: pointer;	
+	}
+</style>
 </head>
 <body>
-
 	<%@include file="../includes/admin/header.jsp"%>
 	<div class="admin_content_wrap">
 		<div class="admin_content_subject">
@@ -147,6 +174,12 @@
 					<div class="form_section_content">
 						<input type="file" name="uploadFile" id="fileItem"
 							style="height: 30px;" />
+							<div id="uploadResult">
+<!-- 								<div id="result_card"> -->
+<!-- 									<div class="imgDeleteBtn">x</div> -->
+<!-- 									<img src="/display?fileName=test.png" alt="" /> -->
+<!-- 								</div> -->
+							</div>
 					</div>
 				</div>
 			</form>
@@ -489,6 +522,7 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 			dataType:'json',
 			success:function(result){
 				console.log(result);
+				showUploadImg(result);
 			},
 			error:function(result){
 				alert("이미지 파일이 아닙니다.");
@@ -510,6 +544,27 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 				return false;
 			}
 			return true;
+		}
+		
+		/* 이미지 출력 */
+		function showUploadImg(uploadResultArr){
+			/* 전달받은 데이터 검증 */
+			if(!uploadResultArr || uploadResultArr.length==0){
+				return;
+			}
+			let uploadResult = $("#uploadResult");
+			let obj = uploadResultArr[0];
+			let str = "";
+			console.log("obj : ",obj);
+			/* url매핑메서드(/display)에 전달해줄 
+			파일의 경로와 이름을 포함하는 값을 저장하는 변수 fileCallPath */
+			let fileCallPath = encodeURIComponent(obj.uploadPath.replace(/\\/g,'/') + "/s_" + obj.uuid + "_" + obj.fileName);
+			console.log("fileCallPath : ",fileCallPath);
+			str += `<div id="result_card">
+				<div class="imgDeleteBtn">x</div>
+				<img src="/display?fileName=\${fileCallPath}"/>
+			</div>`;
+			uploadResult.append(str);
 		}
 });
 		
