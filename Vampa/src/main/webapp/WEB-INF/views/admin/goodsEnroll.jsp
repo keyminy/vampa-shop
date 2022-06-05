@@ -493,6 +493,13 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 	
 	/* 이미지 업로드 */
 	$("input[type='file']").on("change",function(e){
+		/* 이미 선택된 파일이 존재한다면,삭제 처리를 한 후 
+		서버에 이미지를 업로드 요청을 수행해야한다.[26-2]이미지 삭제*/
+		// => 미리보기 이미지 태그의 존재유무에 따라 deleteFile()호출
+		/* 이미지 존재 시 삭제 */
+		if($(".imgDeleteBtn").length>0){
+			deleteFile();
+		}
 		
 		let formData = new FormData(); //FormData객체 생성
 		//alert("동작");
@@ -561,10 +568,39 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 			let fileCallPath = encodeURIComponent(obj.uploadPath.replace(/\\/g,'/') + "/s_" + obj.uuid + "_" + obj.fileName);
 			console.log("fileCallPath : ",fileCallPath);
 			str += `<div id="result_card">
-				<div class="imgDeleteBtn">x</div>
+				<div class="imgDeleteBtn" data-file="\${fileCallPath}">x</div>
 				<img src="/display?fileName=\${fileCallPath}"/>
 			</div>`;
 			uploadResult.append(str);
+		}
+		
+		/* 이미지 삭제 버튼 동작 */
+		$("#uploadResult").on("click", ".imgDeleteBtn", function(e){
+			deleteFile();
+		});
+		
+		/* 파일 삭제 메서드 */
+		function deleteFile(){
+			//썸네일 파일 경로
+			let targetFile = $(".imgDeleteBtn").data("file");
+			//미리보기 이미지를 감싸고 있는 result_card
+			let targetDiv = $("#result_card");
+			$.ajax({
+				url:'/admin/deleteFile',
+				data:{fileName:targetFile},
+				dataType:'text',
+				type:'POST',
+				success:function(result){
+					console.log(result);
+					//result_card의 <div>지우고 + input file태그 초기화
+					targetDiv.remove();
+					$("input[type='file']").val("");
+				},
+				error:function(result){
+					console.log(result);
+					alert("파일을 삭제하지 못하였습니다.");
+				}
+			});
 		}
 });
 		
