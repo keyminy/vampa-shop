@@ -52,4 +52,12 @@ select * from USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
     FROM vam_book
     WHERE bookid > 0
     ORDER BY bookid DESC;
-    
+
+-- [27-3]업로드 이미지 등록
+select vam_book_seq.currval
+from dual;
+
+select * from vam_book
+order by bookId desc;
+
+select * from vam_image;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.vampa.model.AttachImageVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
 import com.vampa.model.Criteria;
@@ -13,6 +14,9 @@ public interface AdminMapper {
 
 	/*상품 등록*/
 	public void bookEnroll(BookVO book);
+	
+	/* 이미지 정보 테이블(vam_image)에 삽입 */
+	public void imageEnroll(AttachImageVO vo);
 	
 	/* 카테고리 리스트 */
 	public List<CateVO> cateList();

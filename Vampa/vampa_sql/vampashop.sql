@@ -58,8 +58,15 @@ create table vam_book(
     updateDate date default sysdate
 );
 
--- 외래키는 : 다른 테이블의 레코드를 가리키는것,
--- 해당 테이블의 값만 등록될 수 있게 하는 것이다.
+-- 상품 이미지
+create table vam_image(
+        bookId int ,
+        fileName varchar2(100) not null,
+        uploadPath varchar2(200) not null,
+        uuid varchar2(100)not null ,
+        primary key (uuid),
+        foreign key (bookId) references vam_book(bookId)
+);
 
 -- 카테고리 테이블
 create table vam_bcate(

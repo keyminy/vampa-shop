@@ -173,7 +173,7 @@
 					</div>
 					<div class="form_section_content">
 						<input type="file" name="uploadFile" id="fileItem"
-							style="height: 30px;" />
+							style="height: 30px;"/>
 							<div id="uploadResult">
 <!-- 								<div id="result_card"> -->
 <!-- 									<div class="imgDeleteBtn">x</div> -->
@@ -559,6 +559,7 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 			if(!uploadResultArr || uploadResultArr.length==0){
 				return;
 			}
+			console.log("uploadResultArr : ",uploadResultArr)
 			let uploadResult = $("#uploadResult");
 			let obj = uploadResultArr[0];
 			let str = "";
@@ -571,6 +572,9 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 				<div class="imgDeleteBtn" data-file="\${fileCallPath}">x</div>
 				<img src="/display?fileName=\${fileCallPath}"/>
 			</div>`;
+			str+="<input type='hidden' name='imageList[0].fileName' value='"+obj.fileName+"'>";
+			str+="<input type='hidden' name='imageList[0].uuid' value='"+obj.uuid+"'>";
+			str+="<input type='hidden' name='imageList[0].uploadPath' value='"+obj.uploadPath+"'>";
 			uploadResult.append(str);
 		}
 		

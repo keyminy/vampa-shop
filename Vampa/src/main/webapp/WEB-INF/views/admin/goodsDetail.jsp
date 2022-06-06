@@ -15,14 +15,12 @@
 	src="https://cdn.ckeditor.com/ckeditor5/33.0.0/classic/ckeditor.js"></script>
 </head>
 <body>
-	<%@include file="../includes/admin/header.jsp"%>
+	<%@ include file="../includes/admin/header.jsp" %>
 	<div class="admin_content_wrap">
 		<div class="admin_content_subject">
 			<span>상품 상세</span>
 		</div>
-
 		<div class="admin_content_main">
-
 			<div class="form_section">
 				<div class="form_section_title">
 					<label>책 제목</label>
@@ -116,8 +114,7 @@
 					<label>상품 재고</label>
 				</div>
 				<div class="form_section_content">
-					<input name="bookStock"
-						value="<c:out value="${goodsInfo.bookStock}"/>" disabled>
+					<input name="bookStock" value="<c:out value="${goodsInfo.bookStock}"/>" disabled>
 				</div>
 			</div>
 			<div class="form_section">
@@ -144,7 +141,19 @@
 					<textarea name="bookContents" id="bookContents_textarea" disabled>${goodsInfo.bookContents}</textarea>
 				</div>
 			</div>
-
+			
+			<!-- 상품 이미지 출력되는 부분 -->
+			<div class="form_section">
+				<div class="form_section_title">
+					<label>상품 이미지</label>
+				</div>
+				<div class="form_section_content">
+					<div id="uploadResult">
+						
+					</div>
+				</div>
+			</div>
+			
 			<div class="btn_section">
 				<button id="cancelBtn" class="btn">상품 목록</button>
 				<button id="modifyBtn" class="btn enroll_btn">수정</button>
@@ -297,6 +306,36 @@
 			$("#moveForm").append(addInput);
 			$("#moveForm").attr("action","/admin/goodsModify");
 			$("#moveForm").submit();
+		});
+		
+		/* 이미지 정보 호출 */
+		let bookId = '<c:out value="${goodsInfo.bookId}"/>';
+		let uploadResult=$("#uploadResult");
+		
+		$.getJSON("/getAttachList",{bookId:bookId},function(arr){
+			
+			/* 서버로부터 전달받은 배열 데이터가 없으면 콜백함수를 빠져나간다. */
+			if(arr.length===0){
+				let str = "";
+				str += "<div id='result_card'>";
+				str += "<img src='/img/이미지없음.png'>";
+				str += "</div>";
+				
+				uploadResult.html(str);	
+				return;
+			}
+			let str="";
+			let obj = arr[0];
+			console.log("obj : " ,obj);
+			
+			let fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
+			str += "<div id='result_card'";
+			str += "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid + "' data-filename='" + obj.fileName + "'";
+			str += ">";
+			str += "<img src='/display?fileName=" + fileCallPath +"'>";
+			str += "</div>";
+			
+			uploadResult.html(str);
 		});
 	}); //end $(document).ready		
 	</script>

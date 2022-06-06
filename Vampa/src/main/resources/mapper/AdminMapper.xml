@@ -5,9 +5,29 @@
   <mapper namespace="com.vampa.mapper.AdminMapper">
   	<!-- 작가 등록 -->
   	<insert id="bookEnroll">
+  		<selectKey resultType="int" keyProperty="bookId" order="AFTER">
+  			SELECT vam_book_seq.CURRVAL
+				FROM dual
+  		</selectKey>
   		insert into vam_book(bookId,bookName, authorId, publeYear, publisher, cateCode, bookPrice, bookStock, bookDiscount, bookIntro, bookContents)
 		values(vam_book_seq.nextval,#{bookName},#{authorId}, #{publeYear},#{publisher},#{cateCode},#{bookPrice},#{bookStock},#{bookDiscount},#{bookIntro},#{bookContents})
   	</insert>
+  	
+  	<!-- 이미지 등록 -->
+  	<insert id="imageEnroll">
+  		INSERT INTO 
+  		vam_image
+	  		(bookId,
+				fileName,
+				uploadPath,
+				uuid)
+			VALUES
+	  		(#{bookId},
+				#{fileName},
+				#{uploadPath},
+				#{uuid})
+  	</insert>
+  	
 		<!-- 카테고리 리스트 -->
   	<select id="cateList" resultType="com.vampa.model.CateVO">
   		select * from vam_bcate order by catecode
