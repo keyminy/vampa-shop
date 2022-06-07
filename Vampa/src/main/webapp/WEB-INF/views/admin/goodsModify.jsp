@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -138,6 +140,17 @@
 						<span class="ck_warn bookContents_warn">책 목차를 입력해주세요.</span>
 					</div>
 				</div>
+				<div class="form_section">
+	   			<div class="form_section_title">
+	   				<label>상품 이미지</label>
+	   			</div>
+	   			<div class="form_section_content">
+						<input type="file" id ="fileItem" name='uploadFile' style="height: 30px;">
+						<div id="uploadResult">
+															
+						</div>									
+     			</div>
+     		</div>
 				<input type="hidden" name='bookId' value="${goodsInfo.bookId}">
 			</form>
 			<div class="btn_section">
@@ -299,6 +312,37 @@
 			let discountPrice = bookPrice * (1-rawDiscountRate);
 			$(".span_discount").html(discountPrice);
 			$("#discount_interface").val(discountRate);
+			
+			/* 기존 이미지 출력 */
+			let bookId = '<c:out value="${goodsInfo.bookId}"/>';
+			let uploadResult = $("#uploadResult");
+			
+			$.getJSON("/getAttachList", {bookId : bookId}, function(arr){
+				console.log(arr);
+				if(arr.length === 0){
+					let str = "";
+					str += "<div id='result_card'>";
+					str += "<img src='/img/이미지없음.png'>";
+					str += "</div>";
+					uploadResult.html(str);
+					return;
+				}
+				
+				let str = "";
+				let obj = arr[0];
+				let fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
+				str += "<div id='result_card'";
+				str += "data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid + "' data-filename='" + obj.fileName + "'";
+				str += ">";
+				str += "<img src='/display?fileName=" + fileCallPath +"'>";
+				str += "<div class='imgDeleteBtn' data-file='" + fileCallPath + "'>x</div>";
+				str += "<input type='hidden' name='imageList[0].fileName' value='"+ obj.fileName +"'>";
+				str += "<input type='hidden' name='imageList[0].uuid' value='"+ obj.uuid +"'>";
+				str += "<input type='hidden' name='imageList[0].uploadPath' value='"+ obj.uploadPath +"'>";				
+				str += "</div>";
+				
+				uploadResult.html(str);			
+			});// GetJSON
 		}); //end document ready
 	</script>
 	<script>
