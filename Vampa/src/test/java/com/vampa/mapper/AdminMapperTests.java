@@ -109,4 +109,17 @@ public class AdminMapperTests {
 			System.out.println("삭제 성공");
 		}
 	}
+	
+	/* 지정 상품 이미지 삭제 */
+	@Test
+	public void deleteImageAllTest() {
+		int bookId = 16777;
+		mapper.deleteImageAll(bookId);
+	}
+	
+	/* 어제자 날짜 이미지 리스트 */
+	@Test
+	public void checkImageListTest() {
+		mapper.checkFileList();
+	}
 }

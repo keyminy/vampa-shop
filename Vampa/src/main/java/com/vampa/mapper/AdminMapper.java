@@ -35,4 +35,10 @@ public interface AdminMapper {
 	
 	/* 상품 정보 삭제 */
 	public int goodsDelete(int bookId);
+	
+	/* 지정 상품 이미지 전체 삭제 */
+	public void deleteImageAll(int bookId);
+	
+	/* 어제자 날짜 이미지 리스트(배치작업) */
+	public List<AttachImageVO> checkFileList();
 }

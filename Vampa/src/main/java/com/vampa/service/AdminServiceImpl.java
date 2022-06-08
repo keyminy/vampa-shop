@@ -65,10 +65,24 @@ public class AdminServiceImpl implements AdminService{
 		return adminMapper.goodsGetDetail(bookId);
 	}
 
+	/* 상품 정보 수정 */
+	@Transactional
 	@Override
 	public int goodsModify(BookVO vo) {
 		log.info("goodsModify........");	
-		return adminMapper.goodsModify(vo);
+		//result : 수정된 "상품 정보"를 DB에 반영하는 메서드
+		int result= adminMapper.goodsModify(vo);
+		//상품 이미지 정보를 수정하는 코드 : 상품 수정이 정상적으로 되었을때만 수행
+		//뷰로부터 상품 이미지 정보가 없으면 실행X이므로,상품 이미지 정보 존재 여부를 확인해야함
+		if(result==1&&vo.getImageList()!=null&&vo.getImageList().size()>0) {
+			//vam_image테이블의 해당 상품의 이미지 정보를 모두 삭제하기
+			adminMapper.deleteImageAll(vo.getBookId());
+			vo.getImageList().forEach(attach->{
+				attach.setBookId(vo.getBookId());
+				adminMapper.imageEnroll(attach);
+			});
+		}
+		return result;
 	}
 
 	@Override

@@ -18,7 +18,7 @@ select * from vam_bcate order by catecode;
  insert into vam_author(authorid,authorName, nationId, authorIntro)
  (SELECT AUTHOR_SEQ.nextval,authorName,nationId,'ㅎㅎㅇㅎㅇ' FROM vam_author);
 -- 인덱스 테스트
-  SELECT /*+ INDEX_DESC(vam_author SYS_C0010168) */
+  SELECT /*+ INDEX_DESC(vam_author SYS_C0010457) */
     *
     FROM vam_author
     WHERE authorid > 0
@@ -33,7 +33,7 @@ select * from vam_author;
 
 
 -- 인덱스 명 찾기
-SELECT * FROM USER_INDEXES;
+SELECT * FROM USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
 -- 외래키 추가
 alter table vam_book add foreign key (authorId) references vam_author(authorId);
 alter table vam_book add foreign key (cateCode) references vam_bcate(cateCode);

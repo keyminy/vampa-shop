@@ -39,7 +39,7 @@
  <![CDATA[
 		SELECT * FROM
 		(
-			SELECT /*+ INDEX_DESC(vam_author SYS_C0010457) */
+			SELECT  /*+ INDEX_DESC(vam_book SYS_C0010457) */
 			ROWNUM rn,bookId,bookName,
 			(SELECT authorName FROM vam_author WHERE vam_book.authorId = vam_author.authorId) authorName,
 			(SELECT cateName FROM vam_bcate WHERE vam_book.cateCode = vam_bcate.cateCode) cateName,
@@ -89,4 +89,17 @@
 		<delete id="goodsDelete">
 			delete from vam_book where bookId = #{bookId}
 		</delete>
+		
+		<!-- 지정 상품 이미지 전체 삭제 -->
+		<delete id="deleteImageAll">
+			DELETE FROM vam_image
+			WHERE bookId=#{bookId}
+		</delete>
+		
+		<!-- 어제자 날짜 이미지 리스트(배치) -->
+		<select id="checkFileList" resultType="com.vampa.model.AttachImageVO">
+			SELECT *
+			FROM vam_image
+			WHERE uploadPath=TO_CHAR(sysdate-1,'yyyy\mm\dd')
+		</select>
   </mapper>

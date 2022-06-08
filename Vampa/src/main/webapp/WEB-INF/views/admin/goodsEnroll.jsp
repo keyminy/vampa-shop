@@ -513,10 +513,10 @@ $("input[name='bookPrice']").on("propertychange change keyup paste input", funct
 		console.log("fileSize : " + fileObj.size);
 		console.log("fileType(MimeType) : " + fileObj.type); */
 		
-/* 		if(!fileCheck(fileObj.name,fileObj.size)){
+		if(!fileCheck(fileObj.name,fileObj.size)){
 			return false;
 		}
-		 */
+
 		formData.append("uploadFile",fileObj);
 		
 		/* AJAX로 서버로 전송하는 코드 */

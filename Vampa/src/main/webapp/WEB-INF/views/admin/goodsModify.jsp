@@ -343,6 +343,104 @@
 				
 				uploadResult.html(str);			
 			});// GetJSON
+			/* 이미지 삭제 버튼 동작 */
+			$("#uploadResult").on("click", ".imgDeleteBtn", function(e){
+				deleteFile();
+			});
+			
+			/* 파일 삭제 메서드 */
+			function deleteFile(){
+				$("#result_card").remove();
+			}
+			
+			/* 이미지 업로드 */
+			$("input[type='file']").on("change",function(e){
+				/* 이미 선택된 파일이 존재한다면,삭제 처리를 한 후 
+				서버에 이미지를 업로드 요청을 수행해야한다.[26-2]이미지 삭제*/
+				// => 미리보기 이미지 태그의 존재유무에 따라 deleteFile()호출
+				/* 이미지 존재 시 삭제 */
+				if($("#result_card").length>0){
+					//console.log("dd",$(".imgDeleteBtn"));
+					deleteFile();
+				}
+				
+				let formData = new FormData(); //FormData객체 생성
+				//alert("동작");
+				/* FileList객체에 접근해보기 */
+				let fileInput = $("input[name='uploadFile']");
+				let fileList = fileInput[0].files;
+		/* 		console.log("fileList : ",fileList); */
+				let fileObj = fileList[0];
+				/* console.log("fileObj : ",fileObj);
+				console.log("fileName : " + fileObj.name);
+				console.log("fileSize : " + fileObj.size);
+				console.log("fileType(MimeType) : " + fileObj.type); */
+				
+				if(!fileCheck(fileObj.name,fileObj.size)){
+					fileInput.val("");
+					return false;
+				}
+
+				formData.append("uploadFile",fileObj);
+				
+				/* AJAX로 서버로 전송하는 코드 */
+				$.ajax({
+					url:'/admin/uploadAjaxAction',
+					processData:false,
+					contentType:false,
+					data:formData,
+					type:"POST",
+					dataType:'json',
+					success:function(result){
+						console.log(result);
+						showUploadImg(result);
+					},
+					error:function(result){
+						alert("이미지 파일이 아닙니다.");
+					}
+				});
+			});
+				/* file 제약조건 걸기 */
+				let regex = new RegExp("(.*?)\.(jpg|png)$","i");
+				let maxSize = 1048576;
+				
+				function fileCheck(fileName,fileSize){
+					if(fileSize >= maxSize){
+						alert("파일 사이즈 초과");
+						return false;
+					}
+					console.log("fileName : ",fileName);
+					if(!regex.test(fileName)){
+						alert("해당 종류의 파일은 업로드할 수 없습니다.");
+						return false;
+					}
+					return true;
+				}
+				
+				/* 이미지 출력 */
+				function showUploadImg(uploadResultArr){
+					/* 전달받은 데이터 검증 */
+					if(!uploadResultArr || uploadResultArr.length==0){
+						return;
+					}
+					console.log("uploadResultArr : ",uploadResultArr)
+					let uploadResult = $("#uploadResult");
+					let obj = uploadResultArr[0];
+					let str = "";
+					console.log("obj : ",obj);
+					/* url매핑메서드(/display)에 전달해줄 
+					파일의 경로와 이름을 포함하는 값을 저장하는 변수 fileCallPath */
+					let fileCallPath = encodeURIComponent(obj.uploadPath.replace(/\\/g,'/') + "/s_" + obj.uuid + "_" + obj.fileName);
+					console.log("fileCallPath : ",fileCallPath);
+					str += `<div id="result_card">
+						<div class="imgDeleteBtn" data-file="\${fileCallPath}">x</div>
+						<img src="/display?fileName=\${fileCallPath}"/>
+					</div>`;
+					str+="<input type='hidden' name='imageList[0].fileName' value='"+obj.fileName+"'>";
+					str+="<input type='hidden' name='imageList[0].uuid' value='"+obj.uuid+"'>";
+					str+="<input type='hidden' name='imageList[0].uploadPath' value='"+obj.uploadPath+"'>";
+					uploadResult.append(str);
+				}
 		}); //end document ready
 	</script>
 	<script>
