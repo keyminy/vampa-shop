@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.vampa.mapper.AdminMapper;
+import com.vampa.model.AttachImageVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
 import com.vampa.model.Criteria;
@@ -85,9 +86,19 @@ public class AdminServiceImpl implements AdminService{
 		return result;
 	}
 
+	/* 상품 정보 삭제 */
+	@Transactional
 	@Override
 	public int goodsDelete(int bookId) {
 		log.info("goodsDelete..........");
+		//이미지 정보 삭제 수행
+		adminMapper.deleteImageAll(bookId);
 		return adminMapper.goodsDelete(bookId);
+	}
+
+	@Override
+	public List<AttachImageVO> getAttachInfo(int bookId) {
+		log.info("getAttachInfo........");
+		return adminMapper.getAttachInfo(bookId);
 	}
 }

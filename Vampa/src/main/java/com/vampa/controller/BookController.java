@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.vampa.mapper.AttachMapper;
 import com.vampa.model.AttachImageVO;
+import com.vampa.model.BookVO;
+import com.vampa.model.Criteria;
+import com.vampa.model.PageDTO;
+import com.vampa.service.AttachService;
+import com.vampa.service.BookService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -24,7 +30,10 @@ import lombok.extern.log4j.Log4j2;
 public class BookController {
 	
 	@Autowired
-	private AttachMapper attachMapper;
+	private AttachService attachService;
+	
+	@Autowired
+	private BookService bookService;
 	
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public void mainPageGET() {
@@ -53,6 +62,24 @@ public class BookController {
 	public ResponseEntity<List<AttachImageVO>> getAttachList(int bookId){
 		//반환 데이터 : 이미지 정보데이터(List<AttachImageVO>)
 		log.info("getAttachList.........Controller bookId : " + bookId);
-		return new ResponseEntity<List<AttachImageVO>>(attachMapper.getAttachList(bookId),HttpStatus.OK);
+		return new ResponseEntity<List<AttachImageVO>>(attachService.getAttachList(bookId),HttpStatus.OK);
 	}
+	
+	/* 상품 검색 */
+	@GetMapping("search")
+	public String searchGoodsGET(Criteria cri,Model model) {
+		log.info("cri : " + cri);
+		List<BookVO> list = bookService.getGoodsList(cri);
+		log.info("pre list : " + list);
+		if(!list.isEmpty()) {
+			model.addAttribute("list",list);
+			log.info("list : " + list);
+		}else {
+			model.addAttribute("listcheck","empty");
+			return "search";
+		}
+		model.addAttribute("pageMaker",new PageDTO(cri, bookService.goodsGetTotal(cri)));
+		return "search";
+	}
+	
 }

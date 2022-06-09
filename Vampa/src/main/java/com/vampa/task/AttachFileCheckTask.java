@@ -35,7 +35,7 @@ public class AttachFileCheckTask {
 		return str.replace("-",File.separator);
 	}
 	
-	@Scheduled(cron="0 * * * * *")
+	@Scheduled(cron="0 0 1 * * *")
 	public void checkFiles() throws Exception{
 		log.warn("File Check Task Run.........");
 		log.warn(new Date());
@@ -46,6 +46,7 @@ List<AttachImageVO> fileList = mapper.checkFileList();
 		/* DB에 저장된 리스트와 디렉토리에 저장된 리스트를 비교하여 누락된 파일 찾기 */
 		//비교를 위해 fileList를 Path객체로 변환(DB에 저장된 리스트임)
 		List<Path> checkFilePath = new ArrayList<Path>();
+		
 		fileList.forEach(vo->{
 			Path path = Paths.get("D:/dev/vamupload",vo.getUploadPath(),vo.getUuid()+"_"+vo.getFileName());
 			checkFilePath.add(path);

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.vampa.mapper.BookMapper">
+  	<!-- criteria(검색 조건) -->
+  	<sql id="criteria">
+			<trim prefix="(" suffix=") AND" prefixOverrides="AND">
+				<!-- WHERE조건문 맨 앞에 AND제거 : prefixOverrides -->
+				<foreach item="type" collection="typeArr">
+					<trim prefix="AND">
+						<choose>
+							<when test="type == 'A'.toString()">
+								<trim prefixOverrides="OR">
+									<foreach item="authorId" collection="authorArr">
+										<trim prefix="OR">
+											authorId = #{authorId}
+										</trim>
+									</foreach>
+								</trim>
+							</when>
+							<when test="type == 'C'.toString()">
+								cateCode LIKE '%' || #{cateCode} || '%'
+							</when>
+							<when test="type == 'T'.toString()">
+								bookName LIKE '%' || #{keyword} || '%'
+							</when>
+						</choose>
+					</trim>
+				</foreach>
+			</trim>
+  	</sql>
+  	
+  	<!-- 상품 검색 -->
+  	<select id="getGoodsList" resultType="com.vampa.model.BookVO">
+		 <![CDATA[
+				SELECT * FROM
+				(
+					SELECT  /*+ INDEX_DESC(vam_book SYS_C0010457) */
+					ROWNUM rn,bookId,bookName,
+					(SELECT authorName FROM vam_author WHERE vam_book.authorId = vam_author.authorId) authorName,authorId,
+					(SELECT cateName FROM vam_bcate WHERE vam_book.cateCode = vam_bcate.cateCode) cateName,
+					cateCode, publisher, publeYear, bookPrice
+					FROM vam_book
+					WHERE 
+			]]>
+			<include refid="criteria"></include>
+			 <![CDATA[
+					ROWNUM <= #{pageNum} * #{amount}
+				)
+				WHERE rn > (#{pageNum}-1) * #{amount}
+			  ]]>
+  	</select>
+  	
+  	<!-- 상품 총 갯수 -->
+  	<select id="goodsGetTotal" resultType="int">
+  		SELECT COUNT(*) 
+  		FROM vam_book
+  		WHERE
+			<include refid="criteria"></include>
+  		bookId > 0
+  	</select>
+  	<!-- [31~](조건 검색)작가 id 리스트 요청 -->
+  	<select id="getAuthorIdList" resultType="String">
+  		SELECT authorid 
+  		FROM vam_author
+  		WHERE authorName LIKE '%' || #{keyword} || '%'
+  	</select>
+  </mapper>

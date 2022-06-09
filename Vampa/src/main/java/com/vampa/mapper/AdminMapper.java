@@ -41,4 +41,7 @@ public interface AdminMapper {
 	
 	/* 어제자 날짜 이미지 리스트(배치작업) */
 	public List<AttachImageVO> checkFileList();
+	
+	/* 지정 상품 이미지 정보 얻기(서버 이미지 파일 삭제) */
+	public List<AttachImageVO> getAttachInfo(int bookId);
 }

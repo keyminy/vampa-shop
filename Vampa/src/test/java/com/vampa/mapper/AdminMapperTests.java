@@ -122,4 +122,12 @@ public class AdminMapperTests {
 	public void checkImageListTest() {
 		mapper.checkFileList();
 	}
+	
+	/* 지정 상품 이미지 정보 얻기 */
+	@Test
+	public void getAttachInfoTest() {
+		int bookId = 3141;
+		List<AttachImageVO> list = mapper.getAttachInfo(bookId);
+		System.out.println("list : " + list);
+	}
 }

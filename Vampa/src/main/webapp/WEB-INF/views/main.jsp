@@ -18,7 +18,18 @@
 					<a href="/main"><img src="/img/vamlogo.png"></a>
 				</div>
 				<div class="search_area">
-					<h1>Search area</h1>
+					<div class="search_wrap">
+						<form action="/search" id="searchForm" method="get">
+							<div class="search_input">
+        				<select name="type">
+         					<option value="T">책 제목</option>
+         					<option value="A">작가</option>
+         				</select>
+								<input type="text" name="keyword"/>
+								<button class="btn search_btn">검 색</button>
+							</div>
+						</form>
+					</div>
 				</div>
 				<div class="login_area">
 					<div class="login_button">

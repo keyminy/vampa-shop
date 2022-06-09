@@ -102,4 +102,11 @@
 			FROM vam_image
 			WHERE uploadPath=TO_CHAR(sysdate-1,'yyyy\mm\dd')
 		</select>
+		
+		<!-- 지정 상품 이미지 정보 얻기(서버 이미지 파일 삭제) -->
+		<select id="getAttachInfo" resultType="com.vampa.model.AttachImageVO">
+			SELECT * 
+			FROM vam_image
+			WHERE bookId=#{bookId}
+		</select>
   </mapper>

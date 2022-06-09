@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -319,6 +321,23 @@ public class AdminController {
 	@PostMapping("/goodsDelete")
 	public String goodsDeletePOST(int bookId, RedirectAttributes rttr) {
 		log.info("goodsDeletePOST..........");
+		/* Step1.서버 파일 삭제 먼저 */
+		List<AttachImageVO> fileList = adminService.getAttachInfo(bookId);
+		//해당 게시글의 이미지가 존재할때만 서버 이미지들이 삭제 될 수 있게 해주기
+		if(fileList!=null) {
+			List<Path> pathList = new ArrayList<>();
+			fileList.forEach(vo->{
+				//원본 이미지
+				Path path = Paths.get("D:/dev/vamupload",vo.getUploadPath(),vo.getUuid()+"_"+vo.getFileName());				
+				pathList.add(path);
+				//썸네일 이미지
+				path = Paths.get("D:/dev/vamupload",vo.getUploadPath(),"s_"+vo.getUuid()+"_"+vo.getFileName());				
+				pathList.add(path);
+			});
+			pathList.forEach(path->{
+				path.toFile().delete();
+			});
+		}
 		int result = adminService.goodsDelete(bookId);
 		rttr.addFlashAttribute("delete_result", result);
 		return "redirect:/admin/goodsManage";
@@ -344,6 +363,5 @@ public class AdminController {
 		rttr.addFlashAttribute("delete_result", result);
 		return "redirect:/admin/authorManage";
 	}
-	
 	
 }
