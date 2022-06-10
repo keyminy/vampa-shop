@@ -40,7 +40,7 @@
 					ROWNUM rn,bookId,bookName,
 					(SELECT authorName FROM vam_author WHERE vam_book.authorId = vam_author.authorId) authorName,authorId,
 					(SELECT cateName FROM vam_bcate WHERE vam_book.cateCode = vam_bcate.cateCode) cateName,
-					cateCode, publisher, publeYear, bookPrice
+					cateCode, publisher, publeYear, bookPrice,bookDiscount
 					FROM vam_book
 					WHERE 
 			]]>
@@ -62,8 +62,9 @@
   	</select>
   	<!-- [31~](조건 검색)작가 id 리스트 요청 -->
   	<select id="getAuthorIdList" resultType="String">
-  		SELECT authorid 
-  		FROM vam_author
-  		WHERE authorName LIKE '%' || #{keyword} || '%'
+  		SELECT DISTINCT /*+ INDEX_DESC(vam_author SYS_C0010168) */ b.authorid
+  		FROM vam_author a,vam_book b
+  		WHERE b.authorid=a.authorid 
+  		AND authorName LIKE '%' || #{keyword} || '%'
   	</select>
   </mapper>

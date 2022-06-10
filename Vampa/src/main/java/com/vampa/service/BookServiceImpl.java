@@ -28,7 +28,7 @@ public class BookServiceImpl implements BookService{
 		
 		if(type.equals("A") || type.equals("AC") || type.equals("AT") || type.equals("ACT")) {
 			if(authorArr.length==0) {
-				//keyword에대한 vam_author테이블 조회 결과가 없으면 빈 List반환 
+				//keyword에대한 vam_author테이블 조회 결과가 없으면 빈 List반환하여 조회안되게함 
 				return new ArrayList<>();
 			}
 		}
@@ -41,6 +41,7 @@ public class BookServiceImpl implements BookService{
 			}
 		}
 		
+		//return new ArrayList<>();
 		return bookMapper.getGoodsList(cri);
 	}
 

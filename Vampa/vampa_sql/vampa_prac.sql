@@ -1,7 +1,8 @@
 
 select * from book_member;
 
-select * from vam_author;
+select * from vam_author
+where authorName='김난도';
 
 commit;
 
@@ -57,7 +58,12 @@ select * from USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
 select vam_book_seq.currval
 from dual;
 
-select * from vam_book
+select b.bookname,a.authorName
+from vam_book b,vam_author a
+where b.authorid=a.authorid
+and a.authorName='수정테스트'
 order by bookId desc;
 
-select * from vam_image;
+SELECT authorid
+FROM vam_author
+WHERE authorName LIKE '%' || '테스트' || '%';
