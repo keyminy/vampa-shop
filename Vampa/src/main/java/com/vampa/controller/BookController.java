@@ -36,8 +36,10 @@ public class BookController {
 	private BookService bookService;
 	
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
-	public void mainPageGET() {
+	public void mainPageGET(Model model) {
 		log.info("메인 페이지 진입");
+		model.addAttribute("cate1", bookService.getCateCode1());
+		model.addAttribute("cate2", bookService.getCateCode2());
 	}
 	
 	/* 이미지 출력 */
@@ -79,6 +81,14 @@ public class BookController {
 			return "search";
 		}
 		model.addAttribute("pageMaker",new PageDTO(cri, bookService.goodsGetTotal(cri)));
+		
+		//getCateInfoList()메서드는 type이 'A','AC','T','TC'인 경우만 호출되어야함.
+		String[] typeArr = cri.getType().split("");
+		for(String s : typeArr) {
+			if(s.equals("T") || s.equals("A")) {
+				model.addAttribute("filter_info",bookService.getCateInfoList(cri));
+			}
+		}
 		return "search";
 	}
 	

@@ -60,11 +60,78 @@
 			<include refid="criteria"></include>
   		bookId > 0
   	</select>
+  	
   	<!-- [31~](조건 검색)작가 id 리스트 요청 -->
   	<select id="getAuthorIdList" resultType="String">
-  		SELECT DISTINCT /*+ INDEX_DESC(vam_author SYS_C0010168) */ b.authorid
-  		FROM vam_author a,vam_book b
-  		WHERE b.authorid=a.authorid 
-  		AND authorName LIKE '%' || #{keyword} || '%'
+  		<choose>
+  			<when test="keyword != null and !''.equals(keyword)">
+  				SELECT DISTINCT /*+ INDEX_DESC(vam_author SYS_C0010168) */ b.authorid
+		  		FROM vam_author a,vam_book b
+		  		WHERE b.authorid=a.authorid 
+		  		AND authorName LIKE '%' || #{keyword,jdbcType=VARCHAR} || '%'
+  			</when>
+  			<!-- keyword가 null일때 -->
+  			<otherwise> select null from dual </otherwise>
+  		</choose>
+  	</select>
+  	
+  	<!-- 국내 카테고리 리스트 -->
+  	<select id="getCateCode1" resultType="com.vampa.model.CateVO">
+			<![CDATA[
+						select * from vam_bcate where cateCode > 100000 and cateCode < 200000
+			]]>
+  	</select>
+  	<!-- 국외 카테고리 리스트 -->
+  	<select id="getCateCode2" resultType="com.vampa.model.CateVO">
+			<![CDATA[
+						select * from vam_bcate where cateCode > 200000 and cateCode < 300000
+			]]>
+  	</select>
+  	
+  	<!-- 검색 대상의 카테고리 리스트 -->
+  	<select id="getCateList" resultType="string">
+  		SELECT DISTINCT cateCode FROM vam_book WHERE
+			<foreach item="type" collection="typeArr">
+  			<choose>
+  				<when test="type == 'A'.toString()">
+  					<trim prefixOverrides="OR">
+  						<foreach collection="authorArr" item="authorId">
+  							<trim prefix="OR">
+  								authorId = #{authorId}
+  							</trim>
+  						</foreach>
+  					</trim>
+  				</when>
+  				<when test="type == 'T'.toString()">
+  					bookName LIKE CONCAT('%',CONCAT(#{keyword},'%'))
+  				</when>
+  			</choose>
+  		</foreach>
+  	</select>
+  	
+  	<!-- 카테고리 정보(+검색대상 갯수) -->
+  	<select id="getCateInfo" resultType="com.vampa.model.CateFilterDTO">
+  		SELECT DISTINCT COUNT(*) cateCount,b.cateCode,c.cateName
+  		FROM vam_book b LEFT OUTER JOIN vam_bcate c
+  		ON b.cateCode = c.cateCode
+  		WHERE
+  	<foreach collection="typeArr" item="type">
+  		<choose>
+  			<when test="type == 'A'.toString()">
+  				<trim prefix="(" suffix=")" prefixOverrides="OR">
+  					<foreach collection="authorArr" item="authorId">
+  						<trim prefix="OR">
+  							authorId = #{authorId}
+  						</trim>
+  					</foreach>
+  				</trim>
+  				AND b.cateCode = #{cateCode}
+  			</when>
+  			<when test="type == 'T'.toString()">
+  				bookName LIKE '%' || #{keyword} || '%' AND b.cateCode = #{cateCode}
+  			</when>
+  		</choose>
+  	</foreach>
+  	GROUP BY b.cateCode,c.CateName
   	</select>
   </mapper>

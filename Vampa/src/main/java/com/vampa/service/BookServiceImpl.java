@@ -6,8 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vampa.mapper.AttachMapper;
 import com.vampa.mapper.BookMapper;
+import com.vampa.model.AttachImageVO;
 import com.vampa.model.BookVO;
+import com.vampa.model.CateFilterDTO;
+import com.vampa.model.CateVO;
 import com.vampa.model.Criteria;
 
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +22,9 @@ public class BookServiceImpl implements BookService{
 
 	@Autowired
 	private BookMapper bookMapper;
+	
+	@Autowired
+	private AttachMapper attachMapper;
 	
 	@Override
 	public List<BookVO> getGoodsList(Criteria cri) {
@@ -41,13 +48,66 @@ public class BookServiceImpl implements BookService{
 			}
 		}
 		
-		//return new ArrayList<>();
-		return bookMapper.getGoodsList(cri);
+		List<BookVO> list = bookMapper.getGoodsList(cri);
+		//각 요소로 있는 BookVO객체 하나하나에 이미지 정보(AttachImageVO)정보를 추가해주는 작업
+		list.forEach(book->{
+			int bookId = book.getBookId();
+			List<AttachImageVO> imageList = attachMapper.getAttachList(bookId);
+			book.setImageList(imageList);
+		});
+		return list;
 	}
 
 	@Override
 	public int goodsGetTotal(Criteria cri) {
 		log.info("goodsGetTotal().......");
 		return bookMapper.goodsGetTotal(cri);
+	}
+
+	@Override
+	public List<CateVO> getCateCode1() {
+		log.info("getCateCode1().........");
+		return bookMapper.getCateCode1();
+	}
+
+	@Override
+	public List<CateVO> getCateCode2() {
+		log.info("getCateCode2().........");
+		return bookMapper.getCateCode2();
+	}
+
+	@Override
+	public List<CateFilterDTO> getCateInfoList(Criteria cri) {
+		List<CateFilterDTO> filterInfoList = new ArrayList<CateFilterDTO>();
+
+		String type = cri.getType();
+		String[] typeArr = type.split("");
+		String[] authorArr;
+		
+		for(String t : typeArr) {
+			if(t.equals("A")) {
+				authorArr = bookMapper.getAuthorIdList(cri.getKeyword());
+				if(authorArr.length==0) {
+					return filterInfoList;
+				}
+				cri.setAuthorArr(authorArr);
+			}
+		}
+		//카테고리 코드들 얻기
+		String[] cateList = bookMapper.getCateList(cri);
+		/*구조 : getCateList()해서 얻어진 String[] cateList를 Criteria객체에 담아서,
+		 * getCateInfo()메서드의 파라미터로 전달함 */
+		
+		/* 그 전에, 기존의 Criteria의 'cateCode'값을 유지해야함,저장해두자 */
+		String tempCateCode = cri.getCateCode();
+		//얻은 cateList모든 요소들을 순회하여 처리하기 for문
+		for(String cateCode : cateList) {
+			cri.setCateCode(cateCode);
+			CateFilterDTO filterInfo = bookMapper.getCateInfo(cri);
+			filterInfoList.add(filterInfo);
+		}
+		//criteria의 카레고리값 원래값 복원
+		cri.setCateCode(tempCateCode);
+		return filterInfoList;
 	}
 }

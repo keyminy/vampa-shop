@@ -8,7 +8,8 @@ commit;
 
 select * from vam_bcate;
 
-select * from vam_book;
+select * from vam_book
+order by bookid desc;
 
 select * from vam_bcate order by catecode;
 
@@ -34,7 +35,7 @@ select * from vam_author;
 
 
 -- 인덱스 명 찾기
-SELECT * FROM USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
+SELECT * FROM USER_INDEXES WHERE TABLE_NAME = 'VAM_AUTHOR';
 -- 외래키 추가
 alter table vam_book add foreign key (authorId) references vam_author(authorId);
 alter table vam_book add foreign key (cateCode) references vam_bcate(cateCode);
@@ -58,12 +59,20 @@ select * from USER_INDEXES WHERE TABLE_NAME = 'VAM_BOOK';
 select vam_book_seq.currval
 from dual;
 
-select b.bookname,a.authorName
+select a.authorId,a.authorName
 from vam_book b,vam_author a
 where b.authorid=a.authorid
-and a.authorName='수정테스트'
-order by bookId desc;
+and a.authorName='김난도';
 
-SELECT authorid
-FROM vam_author
-WHERE authorName LIKE '%' || '테스트' || '%';
+SELECT DISTINCT /*+ INDEX_DESC(vam_author SYS_C0010168) */ b.authorid
+FROM vam_author a,vam_book b
+WHERE b.authorid=a.authorid 
+AND authorName LIKE '%' || '' || '%';
+
+select *
+from vam_author
+where authorName LIKE '%' || '크' || '%';
+
+SELECT DISTINCT cateCode FROM vam_book WHERE
+
+  					bookName LIKE CONCAT('%',CONCAT('테스트','%'));
