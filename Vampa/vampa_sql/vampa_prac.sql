@@ -1,6 +1,3 @@
-
-select * from book_member;
-
 select * from vam_author
 where authorName='김난도';
 
@@ -8,7 +5,7 @@ commit;
 
 select * from vam_bcate;
 
-select * from vam_book
+select * from vam_image
 order by bookid desc;
 
 select * from vam_bcate order by catecode;
@@ -73,6 +70,14 @@ select *
 from vam_author
 where authorName LIKE '%' || '크' || '%';
 
-SELECT DISTINCT cateCode FROM vam_book WHERE
+select * from vam_book
+order by bookid desc;
 
-  					bookName LIKE CONCAT('%',CONCAT('테스트','%'));
+-- 상품 상세보기
+SELECT b.bookId,b.bookName,b.authorId,a.authorName,b.publeYear,b.pubLisher,b.cateCode,
+c.cateName,b.bookPrice,b.bookStock,b.bookDiscount,b.bookIntro,b.bookContents
+FROM vam_book b LEFT OUTER JOIN vam_author a 
+ON b.authorId = a.authorId
+LEFT OUTER JOIN vam_bcate c 
+ON b.cateCode = c.cateCode
+WHERE bookId = 16781;

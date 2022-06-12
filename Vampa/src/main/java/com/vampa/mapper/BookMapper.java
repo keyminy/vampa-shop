@@ -33,4 +33,7 @@ public interface BookMapper {
 	/* 카테고리 정보(+검색대상 갯수) */
 	//CateFilterDTO : 카테고리 이름,카테고리 코드,개수 정보가 담길 수 있다.
 	public CateFilterDTO getCateInfo(Criteria cri);
+	
+	/* 상품 정보 */
+	public BookVO getGoodsInfo(int bookId);
 }

@@ -134,4 +134,15 @@
   	</foreach>
   	GROUP BY b.cateCode,c.CateName
   	</select>
+  	
+  	<!-- 상품 상세 보기 -->
+  	<select id="getGoodsInfo" resultType="com.vampa.model.BookVO">
+  		SELECT b.bookId,b.bookName,b.authorId,a.authorName,b.publeYear,b.pubLisher,b.cateCode,
+  		c.cateName,b.bookPrice,b.bookStock,b.bookDiscount,b.bookIntro,b.bookContents
+  		FROM vam_book b LEFT OUTER JOIN vam_author a 
+  		ON b.authorId = a.authorId
+  		LEFT OUTER JOIN vam_bcate c 
+  		ON b.cateCode = c.cateCode
+  		WHERE bookId = ${bookId}
+  	</select>
   </mapper>

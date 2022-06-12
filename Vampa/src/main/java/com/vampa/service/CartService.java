@@ -1,0 +1,8 @@
+package com.vampa.service;
+
+import com.vampa.model.CartDTO;
+
+public interface CartService {
+	/* 장바구니 추가 */
+	public int addCart(CartDTO cart);
+}

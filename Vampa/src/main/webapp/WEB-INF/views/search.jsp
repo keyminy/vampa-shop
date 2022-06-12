@@ -97,7 +97,9 @@
 												[${list.cateName}]
 											</div>
 											<div class="title">
-												${list.bookName}
+												<a href="/goodsDetail/${list.bookId}">
+													${list.bookName}
+												</a>
 											</div>
 											<div class="author">
 												<fmt:parseDate var="publeYear" value="${list.publeYear}" pattern="yyyy-MM-dd"/>
@@ -172,6 +174,7 @@
 		</div>
 	</div>
 	<script>
+
 	/* 페이지 이동 버튼 */
     const moveForm = $('#moveForm');
     
@@ -181,6 +184,7 @@
 			moveForm.submit();
 		});
 		$(document).ready(function(){
+
 		/* 검색창에서, 사용자가 사용한 type의 option태그 selected속성 부여 */
 			//검색 타입 selected
 			const selectedType = '<c:out value="${pageMaker.cri.type}"/>';

@@ -192,4 +192,15 @@ public class BookMapperTests {
 		cri.setCateCode(cateCode);
 		mapper.getCateInfo(cri);
 	}
+	
+	/* 상품 정보 */
+	@Test
+	public void getGoodsInfo() {
+		int bookId = 16803;
+		BookVO goodsInfo = mapper.getGoodsInfo(bookId);
+		System.out.println("===========================");
+		System.out.println(goodsInfo);
+		System.out.println("===========================");
+		
+	}
 }

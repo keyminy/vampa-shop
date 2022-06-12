@@ -79,9 +79,22 @@ create table vam_bcate(
     foreign key(cateParent) references vam_bcate(cateCode) 
 );
 
+create table vam_cart(
+    cartId number primary key,
+    memberId varchar2(50),
+    bookId number,
+    bookCount number,
+    foreign key (memberId) references book_member(memberId),
+    foreign key (bookId) references vam_book(bookId)
+);
+-- 한 명의 회원이 "이미 등록한 장바구니 상품 정보는 새로 등록되지 않아야한다."
+-- 유니크 제약조건 걸기
+alter table vam_cart add unique (memberId, bookId);
+
 -- 시퀀스 만들기
 CREATE SEQUENCE author_seq;
 CREATE SEQUENCE vam_book_seq;
+CREATE SEQUENCE vam_cart_seq;
 
 -- member 관리자 넣기
 insert into book_member values('admin23', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 1, sysdate, 1000000, 1000000);

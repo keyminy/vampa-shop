@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vampa.mapper.AdminMapper;
 import com.vampa.mapper.AttachMapper;
 import com.vampa.mapper.BookMapper;
 import com.vampa.model.AttachImageVO;
@@ -25,6 +26,9 @@ public class BookServiceImpl implements BookService{
 	
 	@Autowired
 	private AttachMapper attachMapper;
+	
+	@Autowired
+	private AdminMapper adminMapper;
 	
 	@Override
 	public List<BookVO> getGoodsList(Criteria cri) {
@@ -109,5 +113,16 @@ public class BookServiceImpl implements BookService{
 		//criteria의 카레고리값 원래값 복원
 		cri.setCateCode(tempCateCode);
 		return filterInfoList;
+	}
+
+	@Override
+	public BookVO getGoodsInfo(int bookId) {
+		/*mapper의 getGoodsInfo()메서드가 반환해준 BookVO객체에 
+		이미지 정보 데이터를 추가 해주기 위해,imageList변수에 값을 부여해주어야함 
+		AdminMapper의 getAttachInfo()메서드 활용하기 */
+		BookVO goodsInfo = bookMapper.getGoodsInfo(bookId);
+		//BookVO에 이미지 정보 추가
+		goodsInfo.setImageList(adminMapper.getAttachInfo(bookId));
+		return goodsInfo;
 	}
 }
