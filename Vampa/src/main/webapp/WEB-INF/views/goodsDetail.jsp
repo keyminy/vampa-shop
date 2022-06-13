@@ -123,7 +123,13 @@
 						<div class="discount_price">
 							판매가 : <span class="discount_price_number"><fmt:formatNumber value="${goodsInfo.bookPrice - (goodsInfo.bookPrice*goodsInfo.bookDiscount)}" pattern="#,### 원" /></span> 
 							[<fmt:formatNumber value="${goodsInfo.bookDiscount*100}" pattern="###" />% 
-							<fmt:formatNumber value="${goodsInfo.bookPrice*goodsInfo.bookDiscount}" pattern="#,### 원" /> 할인]</div>							
+							<fmt:formatNumber value="${goodsInfo.bookPrice*goodsInfo.bookDiscount}" pattern="#,### 원" /> 할인]
+						</div>
+						<div>
+							<!-- 사용자가 받을 수 있는 "포인트" 출력
+							할인판매 가격의 5%를 받을 수 있도록 할 것 -->
+							적립 포인트 : <span class="point_span"></span>원
+						</div>							
 					</div>			
 					<div class="line">
 					</div>	
@@ -273,6 +279,12 @@
 				alert("로그인이 필요합니다.");	
 			}
 		}
+		
+		/* 포인트 삽입 */
+		let salePrice = "${goodsInfo.bookPrice - (goodsInfo.bookPrice * goodsInfo.bookDiscount)}";
+		let point = salePrice * 0.05;
+		point = Math.floor(point);
+		$(".point_span").text(point);
  });	
 </script>
 </body>

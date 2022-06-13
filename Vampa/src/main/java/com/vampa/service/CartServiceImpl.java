@@ -1,9 +1,13 @@
 package com.vampa.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vampa.mapper.AttachMapper;
 import com.vampa.mapper.CartMapper;
+import com.vampa.model.AttachImageVO;
 import com.vampa.model.CartDTO;
 
 @Service
@@ -11,6 +15,9 @@ public class CartServiceImpl implements CartService{
 
 	@Autowired
 	private CartMapper cartMapper;
+	
+	@Autowired
+	private AttachMapper attachMapper;
 	
 	@Override
 	public int addCart(CartDTO cart) {
@@ -24,6 +31,20 @@ public class CartServiceImpl implements CartService{
 		} catch (Exception e) {
 			return 0;
 		}
+	}
+
+	@Override
+	public List<CartDTO> getCartList(String memberIdt) {
+		List<CartDTO> cart = cartMapper.getCart(memberIdt);
+		for(CartDTO dto : cart) {
+			dto.initSaleTotal();
+			/* 이미지 정보 얻기 */
+			int bookId = dto.getBookId();
+			List<AttachImageVO> imageList = attachMapper.getAttachList(bookId);
+			dto.setImageList(imageList);
+		}
+		//값이 셋팅된 cart를 반환
+		return cart;
 	}
 	
 }

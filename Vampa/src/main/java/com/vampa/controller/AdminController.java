@@ -197,14 +197,13 @@ public class AdminController {
 	/* 이미지 파일 삭제 */
 	@PostMapping("/deleteFile")
 	public ResponseEntity<String> deleteFile(String fileName){
-		System.out.println("찍히긴하나?");
 		log.info("deleteFile....." + fileName);
 		File file = null;
 		try {
 			/* 썸네일 파일 삭제 */
 			file = new File("D:/dev/vamupload/"+URLDecoder.decode(fileName,"UTF-8"));
 			file.delete();
-			System.out.println("파일 : " + file.toString());
+			log.info("파일 : " + file.toString());
 			/* 원본 파일 삭제 */
 			String originFileName = file.getAbsolutePath().replace("s_", "");
 			log.info("originFileName : " + originFileName);

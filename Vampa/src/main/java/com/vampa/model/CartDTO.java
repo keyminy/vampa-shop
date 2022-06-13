@@ -1,5 +1,7 @@
 package com.vampa.model;
 
+import java.util.List;
+
 public class CartDTO {
 	/*처음 4개 : vam_cart 테이블의 속성*/
     private int cartId;
@@ -16,13 +18,22 @@ public class CartDTO {
     private int bookPrice;
     
     private double bookDiscount;
-    
     // 추가
     //할인을 적용한 상품 한 개의 판매가격
     private int salePrice;
     
     //총 가격 = 판매가격 * 수량
     private int totalPrice;
+    
+    /* point정보(37~~) */
+    //상품 한개의 받을 수 있는 포인트
+    private int point;
+    
+    //장바구니 페이지에서 사용자가 구매하고자 하는 수량까지 곱하여 받을 수 있는 포인트
+    private int totalPoint;
+    
+	/* 이미지 정보 */
+	private List<AttachImageVO> imageList;
     
     /* 게터&세터 (단,salePrice와 totalPrice의 setter는 생성안함) */
     public int getCartId() {
@@ -89,18 +100,38 @@ public class CartDTO {
 		return totalPrice;
 	}
 
+	public int getPoint() {
+		return point;
+	}
+
+	public int getTotalPoint() {
+		return totalPoint;
+	}
 	/* salePrice와 totalPrice의 변수 값을 초기화 해주는 메서드 */
 	public void initSaleTotal() {
 		//할인을 적용한 상품 한 개의 판매가격
 		this.salePrice = (int)(this.bookPrice * (1-this.bookDiscount));
 		//총 가격 = 판매가격 * 수량
 		this.totalPrice = this.salePrice * this.bookCount;
+		/* point정보 */
+		this.point = (int)(Math.floor(this.salePrice*0.05));
+		this.totalPoint = this.point * this.bookCount;
 	}
-	
+
+	public List<AttachImageVO> getImageList() {
+		return imageList;
+	}
+
+	public void setImageList(List<AttachImageVO> imageList) {
+		this.imageList = imageList;
+	}	
+
 	@Override
 	public String toString() {
 		return "CartDTO [cartId=" + cartId + ", memberId=" + memberId + ", bookId=" + bookId + ", bookCount="
 				+ bookCount + ", bookName=" + bookName + ", bookPrice=" + bookPrice + ", bookDiscount=" + bookDiscount
-				+ ", salePrice=" + salePrice + ", totalPrice=" + totalPrice + "]";
+				+ ", salePrice=" + salePrice + ", totalPrice=" + totalPrice + ", point=" + point + ", totalPoint="
+				+ totalPoint + ", imageList=" + imageList + "]";
 	}
+	
 }
