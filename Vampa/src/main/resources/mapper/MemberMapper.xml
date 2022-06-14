@@ -19,4 +19,11 @@
         from book_member 
         where memberId = #{memberId} and memberPw = #{memberPw}
      </select>
+     
+     <select id="getMemberInfo" resultType="com.vampa.model.MemberVO">
+     	SELECT memberId,memberName,memberMail,
+     	memberAddr1,memberAddr2,memberAddr3,money,point
+     	FROM book_member
+     	WHERE memberId = #{memberId}
+     </select>
   </mapper>

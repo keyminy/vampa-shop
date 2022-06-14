@@ -91,10 +91,38 @@ create table vam_cart(
 -- 유니크 제약조건 걸기
 alter table vam_cart add unique (memberId, bookId);
 
+create table vam_order(
+    orderId varchar2(50) primary key,
+    addressee varchar2(50) not null,
+    memberId varchar2(50),
+    memberAddr1 varchar2(100) not null,
+    memberAddr2 varchar2(100) not null,
+    memberAddr3 varchar2(100) not null,
+    orderState varchar2(30) not null,
+    deliveryCost number not null,
+    usePoint number not null,
+    orderDate date default sysdate,
+    FOREIGN KEY (memberId)REFERENCES book_member(memberId)
+);
+
+create table vam_orderItem(
+    orderItemId number primary key,
+    orderId varchar2(50),
+    bookId number,
+    bookCount number not null,
+    bookPrice number not null,
+    bookDiscount number not null,
+    savePoint number not null,
+    FOREIGN KEY (orderId) REFERENCES vam_order(orderId),
+    FOREIGN KEY (bookId) REFERENCES vam_book(bookId)
+);
+
+
 -- 시퀀스 만들기
 CREATE SEQUENCE author_seq;
 CREATE SEQUENCE vam_book_seq;
 CREATE SEQUENCE vam_cart_seq;
+CREATE SEQUENCE vam_orderItem_seq;
 
 -- member 관리자 넣기
 insert into book_member values('admin23', 'admin', 'admin', 'admin', 'admin', 'admin', 'admin', 1, sysdate, 1000000, 1000000);

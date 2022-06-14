@@ -164,6 +164,11 @@
 			<div class="content_bottom">
 				리뷰
 			</div>
+			<!-- 주문 form -->
+			<form action="/order/${member.memberId}" class="order_form" method="get">
+				<input type="hidden" name="orders[0].bookId" value="${goodsInfo.bookId}"/>
+				<input type="hidden" name="orders[0].bookCount" value=""/>
+			</form>
 		</div>
 		
 		<!-- Footer 영역 -->
@@ -285,6 +290,13 @@
 		let point = salePrice * 0.05;
 		point = Math.floor(point);
 		$(".point_span").text(point);
+		
+		/* 바로 구매 버튼 */
+		$(".btn_buy").on("click",function(){
+			let bookCount = $(".quantity_input").val();
+			$(".order_form").find("input[name='orders[0].bookCount']").val(bookCount);
+			$(".order_form").submit();
+		});
  });	
 </script>
 </body>
