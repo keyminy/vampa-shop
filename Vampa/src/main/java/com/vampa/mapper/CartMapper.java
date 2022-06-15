@@ -33,4 +33,8 @@ public interface CartMapper {
 	/* 카트 확인
 	 * 장바구니 테이블 한 개의 ROW 가져오기 */
 	public CartDTO checkCart(CartDTO cart);
+	
+	/*[42-2]주문 구현*/
+	/* 장바구니 경로로, 주문을 한 경우 주문 상품에 대한 장바구니 상품 정보 삭제 */
+	public int deleteOrderCart(CartDTO dto);
 }

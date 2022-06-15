@@ -15,7 +15,7 @@
   	
  	 <!-- 로그인 -->
      <select id="memberLogin" resultType="com.vampa.model.MemberVO">
-        select memberId, memberName, adminck, money, point 
+        select memberId,memberPw,memberName, adminck, money, point 
         from book_member 
         where memberId = #{memberId} and memberPw = #{memberPw}
      </select>

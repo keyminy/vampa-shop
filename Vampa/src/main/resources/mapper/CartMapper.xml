@@ -37,4 +37,11 @@
 		FROM vam_cart
 		WHERE memberId = #{memberId} AND bookId = #{bookId}
 	</select>
+	
+	<!-- [42-2]주문구현~ -->
+	<delete id="deleteOrderCart">
+		DELETE FROM vam_cart 
+		WHERE memberId=#{memberId}
+		AND bookId=#{bookId}
+	</delete>
 </mapper>
