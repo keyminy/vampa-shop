@@ -40,4 +40,25 @@
 		SET bookStock=#{bookStock}
 		WHERE bookId=#{bookId}
 	</update>
+	
+	<!-- 주문 취소 -->
+	<update id="orderCancle">
+		UPDATE vam_order
+		SET orderState='주문취소'
+		WHERE orderId=#{orderId}
+	</update>
+	
+	<!-- 주문 상품정보(주문취소) -->
+	<select id="getOrderItemInfo" resultType="com.vampa.model.OrderItemDTO">
+		SELECT *
+		FROM vam_orderItem
+		WHERE orderId=#{orderId}
+	</select>
+	
+	<!-- 주문 정보(주문 취소) -->
+	<select id="getOrder" resultType="com.vampa.model.OrderDTO">
+		SELECT *
+		FROM vam_order
+		WHERE orderId=#{orderId}
+	</select>
 </mapper>

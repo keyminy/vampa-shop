@@ -1,5 +1,7 @@
 package com.vampa.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.vampa.model.BookVO;
@@ -29,4 +31,14 @@ public interface OrderMapper {
 	
 	/* 회원이 주문한 상품의 개수만큼, vam_book테이블의 '상품 재고'를 차감 */
 	public int deductStock(BookVO book);
+	
+	/*[44~]주문 취소*/
+	/* 주문 취소 */
+	public int orderCancle(String orderId);
+	
+	/* vam_orderItem테이블, 주문 상품 정보(주문취소) */
+	public List<OrderItemDTO> getOrderItemInfo(String orderId);
+	
+	/* (회원이 주문한 vam_order테이블) 주문 정보(주문취소) */
+	public OrderDTO getOrder(String orderId);
 }

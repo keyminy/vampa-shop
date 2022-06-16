@@ -18,6 +18,7 @@ import com.vampa.model.AttachImageVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CartDTO;
 import com.vampa.model.MemberVO;
+import com.vampa.model.OrderCancleDTO;
 import com.vampa.model.OrderDTO;
 import com.vampa.model.OrderItemDTO;
 import com.vampa.model.OrderPageItemDTO;
@@ -124,6 +125,49 @@ public class OrderServiceImpl implements OrderService{
 			dto.setMemberId(ord.getMemberId());
 			dto.setBookId(oit.getBookId());
 			cartMapper.deleteOrderCart(dto);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void orderCancle(OrderCancleDTO dto) {
+		/* 1.DB에 저장된 주문,주문 상품 정보 꺼내오기 */
+		/* 회원 */
+		MemberVO member = memberMapper.getMemberInfo(dto.getMemberId());
+		
+		/*2.회원이 지불한 금액,포인트,받았던 포인트 값 구하기 */
+		/* 주문 상품 */
+		List<OrderItemDTO> ords = orderMapper.getOrderItemInfo(dto.getOrderId());
+		for(OrderItemDTO ord : ords) {
+			ord.initSaleTotal();
+		}
+		/* 주문 */
+		//orw = OrderRequestWrapper
+		OrderDTO orw = orderMapper.getOrder(dto.getOrderId());
+		orw.setOrders(ords);
+		orw.getOrderPriceInfo();
+		
+		/* vam_order의 orderState컬럼을 주문취소로 */
+		orderMapper.orderCancle(dto.getOrderId());
+		
+		/* 3.회원이 사용한 돈,포인트반환 */
+		/* 돈 */
+		int calMoney = member.getMoney();
+		calMoney += orw.getOrderFinalSalePrice();
+		member.setMoney(calMoney);
+		/* 포인트 */
+		int calPoint = member.getPoint();
+		calPoint += calPoint + orw.getUsePoint() - orw.getOrderSavePoint();
+		member.setPoint(calPoint);
+		
+		/* DB에 돈,point반영 */
+		orderMapper.deductMoney(member);
+		
+		/* 4.마지막, vam_book테이블의 재고 반환 */
+		for(OrderItemDTO ord : orw.getOrders()) {
+			BookVO book = bookMapper.getGoodsInfo(ord.getBookId());
+			book.setBookStock(book.getBookStock() + ord.getBookCount());
+			orderMapper.deductStock(book);
 		}
 	}
 }

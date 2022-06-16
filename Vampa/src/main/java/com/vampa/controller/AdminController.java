@@ -34,9 +34,12 @@ import com.vampa.model.AuthorVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
 import com.vampa.model.Criteria;
+import com.vampa.model.OrderCancleDTO;
+import com.vampa.model.OrderDTO;
 import com.vampa.model.PageDTO;
 import com.vampa.service.AdminService;
 import com.vampa.service.AuthorService;
+import com.vampa.service.OrderService;
 
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnails;
@@ -50,6 +53,8 @@ public class AdminController {
 	private AdminService adminService;
 	@Autowired
 	private AuthorService authorService;
+	@Autowired
+	private OrderService orderService;
 
 	/* 관리자 메인 페이지 이동 */
 	@RequestMapping(value = "main", method = RequestMethod.GET)
@@ -363,4 +368,26 @@ public class AdminController {
 		return "redirect:/admin/authorManage";
 	}
 	
+	/* 주문 현황 페이지 */
+	@GetMapping("/orderList")
+	public String orderListGET(Criteria cri, Model model) {
+		/* 주문 페이지의 주문 정보와, 페이지 번호 버튼을 만드는 페이지 정보를 뷰로 전달*/
+		List<OrderDTO> list = adminService.getOrderList(cri);
+		
+		if(!list.isEmpty()) {
+			model.addAttribute("list",list);
+		}else {
+			model.addAttribute("listCheck","empty");
+		}
+		model.addAttribute("pageMaker",new PageDTO(cri,adminService.getOrderTotal(cri)));
+		return "/admin/orderList";
+	}
+	
+	/* 주문삭제 */
+	@PostMapping("/orderCancle")
+	public String orderCanclePOST(OrderCancleDTO dto) {
+		orderService.orderCancle(dto);
+		
+		return "redirect:/admin/orderList?keyword=" + dto.getKeyword() + "&amount=" + dto.getAmount() + "&pageNum=" + dto.getPageNum();
+	}
 }

@@ -6,6 +6,7 @@ import com.vampa.model.AttachImageVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
 import com.vampa.model.Criteria;
+import com.vampa.model.OrderDTO;
 
 public interface AdminService {
 	/* 상품 등록 */
@@ -31,4 +32,11 @@ public interface AdminService {
 	
 	/* 지정 상품 이미지 정보 얻기 */
 	public List<AttachImageVO> getAttachInfo(int bookId);
+	
+	/*[43]주문현황*/
+	/* 주문 상품 리스트 */
+	public List<OrderDTO> getOrderList(Criteria cri);
+	
+	/* 주문 총 갯수 */
+	public int getOrderTotal(Criteria cri);
 }

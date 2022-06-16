@@ -8,6 +8,7 @@ import com.vampa.model.AttachImageVO;
 import com.vampa.model.BookVO;
 import com.vampa.model.CateVO;
 import com.vampa.model.Criteria;
+import com.vampa.model.OrderDTO;
 
 @Mapper
 public interface AdminMapper {
@@ -44,4 +45,11 @@ public interface AdminMapper {
 	
 	/* 지정 상품 이미지 정보 얻기(서버 이미지 파일 삭제) */
 	public List<AttachImageVO> getAttachInfo(int bookId);
+	
+	/* [43~]주문현황 */
+	/* 주문 상품 리스트 */
+	public List<OrderDTO> getOrderList(Criteria cri);
+	
+	/* 주문 총 갯수 */
+	public int getOrderTotal(Criteria cri);
 }

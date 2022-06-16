@@ -2,6 +2,7 @@ package com.vampa.service;
 
 import java.util.List;
 
+import com.vampa.model.OrderCancleDTO;
 import com.vampa.model.OrderDTO;
 import com.vampa.model.OrderPageItemDTO;
 
@@ -14,4 +15,7 @@ public interface OrderService {
 	/* 주문처리 구현 */
 	public void order(OrderDTO orw);
 	//orw = OrderRequestWrapper
+	
+	/* 주문 취소 */
+	public void orderCancle(OrderCancleDTO dto);
 }
